@@ -76,3 +76,4 @@ group :production do
 end
 
 gem 'mysql2', '0.3.18'
+gem 'jquery-rails'
