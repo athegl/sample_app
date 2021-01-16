@@ -7,6 +7,8 @@ ruby '2.5.1'
 gem 'rails', '~> 5.2.4', '>= 5.2.4.4'
 gem 'bcrypt'
 gem 'faker'
+gem 'carrierwave'
+gem 'mini_magick'
 gem 'will_paginate'
 gem 'bootstrap-will_paginate'
 gem 'bootstrap-sass'
@@ -75,6 +77,7 @@ end
 
 group :production do
   # gem 'pg'
+  gem 'fog-aws'
   gem 'rails_12factor'
 end
 
