@@ -6,6 +6,10 @@ class Micropost < ApplicationRecord
   validates :user_id, presence: true
   validates :content, presence: true, length: { maximum: 140 }
   validate  :picture_size
+  
+  def Micropost.including_replies(id)
+    where(in_reply_to: [id, 0]).or(Micropost.where(user_id: id))
+  end
 
   private
 

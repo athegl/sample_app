@@ -81,9 +81,10 @@ class User < ApplicationRecord
   # ユーザーのステータスフィードを返す
   def feed
     following_ids = "SELECT followed_id FROM relationships
-                     WHERE follower_id = :user_id"
-    Micropost.where("user_id IN (#{following_ids})
-                     OR user_id = :user_id", user_id: id)
+                   WHERE follower_id = :user_id"
+    Micropost.including_replies(id)
+           .where("user_id IN (#{following_ids})
+                   OR user_id = :user_id", user_id: id)
   end
   
   # ユーザーをフォローする
@@ -100,6 +101,18 @@ class User < ApplicationRecord
   def following?(other_user)
     following.include?(other_user)
   end
+  
+  # 保存する前に一意ユーザ名を全て小文字に変換する
+before_save   :downcase_unique_name
+
+# @一意ユーザ名の正規表現(大文字小文字を区別しない、半角英数とアンダースコアのみ)
+VALID_UNIQUE_NAME_REGEX = /\A[a-z0-9_]+\z/i
+
+# バリデーション
+validates :unique_name, presence: true,                              # 空でないこと
+                        length: { in: 5..15 },                       # 長さ5～15文字であること
+                        format: { with: VALID_UNIQUE_NAME_REGEX },   # 一意ユーザ名の正規表現にマッチすること
+                        uniqueness: { case_sensitive: false }        # 大文字小文字に関わらず一意で
 
   private
 
@@ -112,6 +125,11 @@ class User < ApplicationRecord
     def create_activation_digest
       self.activation_token  = User.new_token
       self.activation_digest = User.digest(activation_token)
+    end
+    
+    # 一意ユーザ名をすべて小文字にする
+    def downcase_unique_name
+      self.unique_name.downcase!
     end
     
 end

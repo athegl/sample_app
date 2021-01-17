@@ -5,6 +5,7 @@ michael:
   admin: true
   activated: true
   activated_at: <%= Time.zone.now %>
+  unique_name: michael_example 
 
 archer:
   name: Sterling Archer
@@ -34,4 +35,5 @@ user_<%= n %>:
   password_digest: <%= User.digest('password') %>
   activated: true
   activated_at: <%= Time.zone.now %>
+  unique_name: <%= "example_#{n}" %>
 <% end %>
